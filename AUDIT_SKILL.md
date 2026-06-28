@@ -1,7 +1,7 @@
 # App Store Audit Skill — Rule Engine v2.0.0
 
 > This file is read by AI coding assistants to audit mobile apps before Apple App Store & Google Play Store submission.
-> **95+ rules** across **21 categories** — works with **any** mobile framework.
+> **140+ rules** across **32 categories** — works with **any** mobile framework.
 > Flutter • React Native • Swift/SwiftUI • Kotlin/Jetpack Compose • KMP • Java • Xamarin • .NET MAUI
 
 ---
@@ -174,6 +174,118 @@ ITSAppUsesNonExemptEncryption (set NO if no custom encryption)
 
 ---
 
+## AI & Machine Learning Content (3.3.11) — NEW 2025-2026
+
+> Apps using AI to generate content must implement safety measures. Apple aggressively rejects AI apps without proper safeguards.
+
+| ID | Severity | Rule | What to Search |
+|----|----------|------|----------------|
+| `AAPL-AI-001` | 🔴 | **AI-generated content must have safety filters** | If app generates text/images/audio via AI, must filter NSFW, hate speech, violence |
+| `AAPL-AI-002` | 🔴 | **AI apps with UGC must have moderation** | AI chatbots, image generators need: reporting, blocking, content filtering (Guideline 1.2) |
+| `AAPL-AI-003` | 🔴 | **No dynamic code execution from AI** | AI must not generate/execute code that changes app features post-approval (Guideline 2.5.2) |
+| `AAPL-AI-004` | 🟡 | **Disclose AI usage to users** | Clearly state how AI is used, what data is processed, and provide user controls |
+| `AAPL-AI-005` | 🟡 | **AI chatbots need safety guardrails** | Prevent AI from generating harmful advice, impersonation, or misinformation |
+
+---
+
+## Privacy Manifests & SDK Compliance — NEW 2025-2026
+
+> **CRITICAL:** Apple **automatically rejects** apps missing privacy manifests before they reach human review. This is the #1 new silent killer.
+
+| ID | Severity | Rule | What to Search |
+|----|----------|------|----------------|
+| `AAPL-MANIFEST-001` | 🔴 | **PrivacyInfo.xcprivacy file required** | If app or any SDK uses Required Reason APIs (UserDefaults, file timestamps, disk space, boot time) |
+| `AAPL-MANIFEST-002` | 🔴 | **All third-party SDKs must have privacy manifests** | Every SDK must include its own PrivacyInfo.xcprivacy + digital signature |
+| `AAPL-MANIFEST-003` | 🔴 | **Required Reason APIs must declare approved codes** | Each API usage must specify Apple's approved reason code |
+| `AAPL-MANIFEST-004` | 🟡 | **Tracking domains must be declared** | All domains contacted for tracking must be listed in privacy manifest |
+| `AAPL-MANIFEST-005` | 🟡 | **Review Xcode privacy report before submission** | Use Product → Archive → Distribute to review aggregated privacy report |
+
+**Required Reason API categories to audit:**
+```
+NSPrivacyAccessedAPICategoryFileTimestamp
+NSPrivacyAccessedAPICategorySystemBootTime
+NSPrivacyAccessedAPICategoryDiskSpace
+NSPrivacyAccessedAPICategoryUserDefaults
+NSPrivacyAccessedAPICategoryActiveKeyboards
+```
+
+---
+
+## Sign in with Apple (4.8)
+
+| ID | Severity | Rule | What to Search |
+|----|----------|------|----------------|
+| `AAPL-AUTH-001` | 🔴 | **Sign in with Apple required if any social login exists** | If app offers Google, Facebook, Twitter login → MUST also offer Sign in with Apple |
+| `AAPL-AUTH-002` | 🟡 | **Delay sign-in until user experiences value** | Don't force login on first screen — let users explore first |
+| `AAPL-AUTH-003` | 🟡 | **Support anonymous/guest mode where possible** | If app can work without account, allow guest access |
+
+---
+
+## Account & Data Deletion — APPLE ENFORCEMENT (CRITICAL)
+
+> **Apple strictly enforces this since 2022.** If your app allows account creation, users MUST be able to delete their account AND all associated data from WITHIN the app. This is one of the most common rejections for apps with login. No exceptions, no workarounds, no "email us to delete."
+
+| ID | Severity | Rule | What to Check |
+|----|----------|------|---------------|
+| `AAPL-DEL-001` | 🔴 | **In-app account deletion MUST exist** | If users can create accounts, they MUST delete from within the app — not email, not website only |
+| `AAPL-DEL-002` | 🔴 | **Must ACTUALLY delete data from servers** | Don't just deactivate/disable — must delete all personal data from ALL databases |
+| `AAPL-DEL-003` | 🔴 | **Sign in with Apple token revocation required** | Must call Apple's REST API to revoke refresh tokens on account deletion |
+| `AAPL-DEL-004` | 🔴 | **Must not require contacting support** | Users must self-serve — no "email us" or "contact support to delete" |
+| `AAPL-DEL-005` | 🔴 | **Deletion must be easy to find** | Must be in Settings/Profile — not buried 5 levels deep in menus |
+| `AAPL-DEL-006` | 🔴 | **Must delete from ALL services** | Delete from database, analytics, crash reporting, third-party services |
+| `AAPL-DEL-007` | 🟡 | **Explain consequences before deletion** | Warn what user loses (purchases, data, history) before confirming |
+| `AAPL-DEL-008` | 🟡 | **Process deletion promptly** | Don't delay — process within days, not weeks or months |
+| `AAPL-DEL-009` | 🟡 | **Clear data retention disclosure** | If any data retained (legal/fraud reasons), explain what and why |
+| `AAPL-DEL-010` | 🟡 | **Confirmation step required** | Must confirm ("Are you sure?") to prevent accidental deletion |
+
+**Apple Account Deletion — Complete Implementation Checklist:**
+```
+CLIENT SIDE:
+├── "Delete Account" button in Settings/Profile (easy to find)
+├── Confirmation dialog explaining what will be deleted
+├── Re-authenticate user (password or biometrics) before deletion
+├── Show loading state during deletion process
+├── Clear all local data (cache, tokens, preferences)
+└── Redirect to login/welcome screen after deletion
+
+SERVER SIDE:
+├── Delete user record from main database
+├── Delete all user-generated content (posts, messages, media)
+├── Delete uploaded files from storage (S3, GCS, Firebase Storage)
+├── Revoke Sign in with Apple tokens (Apple REST API — REQUIRED)
+├── Revoke Google Sign-In tokens (if applicable)
+├── Remove from analytics (Firebase Analytics, Mixpanel, Amplitude)
+├── Remove from crash reporting (Crashlytics, Sentry)
+├── Remove from email/marketing services (Mailchimp, SendGrid)
+├── Cancel active subscriptions or notify user about them
+├── Send deletion confirmation email to user
+└── Log deletion event (for compliance audit trail only)
+```
+
+---
+
+## Age Rating & Verification — UPDATED 2025-2026
+
+| ID | Severity | Rule | What to Check |
+|----|----------|------|---------------|
+| `AAPL-AGE-001` | 🔴 | **Updated age rating questionnaire completed** | Apple overhauled age ratings in 2025 — must submit updated responses |
+| `AAPL-AGE-002` | 🔴 | **Dating/matchmaking apps need age gate** | Must verify user is 18+ before allowing access to the app |
+| `AAPL-AGE-003` | 🟡 | **Declared Age Range API for applicable U.S. states** | Some states require age verification — check if your app is affected |
+
+---
+
+## EU Digital Markets Act (DMA) Compliance
+
+> These rules apply ONLY to apps distributed in the EU. Marked as warnings since they're region-specific.
+
+| ID | Severity | Rule | What to Check |
+|----|----------|------|---------------|
+| `AAPL-DMA-001` | 🟡 | **Alternative payment processors allowed in EU** | EU apps may use Stripe/PayPal for digital goods (with Core Technology Fee) |
+| `AAPL-DMA-002` | 🟡 | **Alternative browser engines allowed in EU** | WebKit-only requirement relaxed for EU-distributed apps |
+| `AAPL-DMA-003` | 🟡 | **Promotion of offers entitlement** | EU developers can promote alternative payment methods in-app |
+
+---
+
 # 🤖 GOOGLE PLAY STORE RULES
 
 ## 1. Billing & Payments
@@ -252,7 +364,7 @@ ITSAppUsesNonExemptEncryption (set NO if no custom encryption)
 
 | ID | Severity | Rule | What to Check |
 |----|----------|------|---------------|
-| `GOOG-TECH-001` | 🔴 | **Target SDK current (API 34+)** | Check targetSdkVersion in build.gradle |
+| `GOOG-TECH-001` | 🔴 | **Target SDK current (API 35+)** | Check targetSdkVersion in build.gradle |
 | `GOOG-TECH-002` | 🔴 | **64-bit required (arm64-v8a)** | Must include arm64 architecture |
 | `GOOG-TECH-003` | 🔴 | **AAB format required** | Upload .aab, not .apk |
 | `GOOG-TECH-004` | 🔴 | **Version code must increment** | Higher versionCode than previous upload |
@@ -270,6 +382,90 @@ ITSAppUsesNonExemptEncryption (set NO if no custom encryption)
 | `GOOG-PERF-002` | 🟡 | **No excessive battery drain** | Check background processes |
 | `GOOG-PERF-003` | 🟡 | **No memory leaks** | Test for memory growth |
 | `GOOG-PERF-004` | 🔴 | **No laggy UI** | Smooth scrolling, responsive interactions |
+
+---
+
+## SDK & Third-Party Compliance — NEW 2025-2026
+
+> You are responsible for ALL code in your app, including third-party SDKs. If an SDK violates Google Play policy, YOUR app gets suspended.
+
+| ID | Severity | Rule | What to Search |
+|----|----------|------|----------------|
+| `GOOG-SDK-001` | 🔴 | **All SDKs must comply with Play policies** | Audit every SDK for data collection, permissions, behavior |
+| `GOOG-SDK-002` | 🔴 | **Remove flagged/banned SDKs immediately** | Check Google's SDK enforcement alerts in Play Console |
+| `GOOG-SDK-003` | 🟡 | **SDK data collection matches Data Safety** | What SDKs collect must be accurately declared in Data Safety form |
+
+---
+
+## Photo & Media Permissions — NEW 2025-2026
+
+> Google now restricts broad media access. Apps must use system pickers or submit declaration forms.
+
+| ID | Severity | Rule | What to Search |
+|----|----------|------|----------------|
+| `GOOG-MEDIA-001` | 🔴 | **Use Android Photo Picker instead of broad READ_MEDIA_*** | For one-time/infrequent access, MUST use system Photo Picker API |
+| `GOOG-MEDIA-002` | 🔴 | **Broad photo/video access needs declaration** | If core feature needs full library access, submit declaration form in Play Console |
+| `GOOG-MEDIA-003` | 🟡 | **Use Contact Picker instead of READ_CONTACTS** | Use system Contact Picker for selecting specific contacts — avoid broad access |
+
+---
+
+## Foreground Service Restrictions — NEW 2025-2026
+
+| ID | Severity | Rule | What to Search |
+|----|----------|------|----------------|
+| `GOOG-FGS-001` | 🔴 | **Foreground services must declare type in manifest** | `android:foregroundServiceType` required for API 34+ targets |
+| `GOOG-FGS-002` | 🔴 | **Geofencing not allowed as foreground service** | Must migrate to Geofence API — foreground service use is rejected |
+| `GOOG-FGS-003` | 🟡 | **DataSync services have 6-hour timeout** | Long-running sync must use WorkManager or user-initiated data transfer jobs |
+| `GOOG-FGS-004` | 🟡 | **Prefer WorkManager over foreground services** | If use case doesn't fit approved foreground service types, use WorkManager |
+
+---
+
+## Families & Kids Policy — NEW 2025-2026
+
+| ID | Severity | Rule | What to Search |
+|----|----------|------|----------------|
+| `GOOG-FAMILY-001` | 🔴 | **Kids apps: no advertising IDs** | Must not transmit Android advertising identifiers in Families/kids apps |
+| `GOOG-FAMILY-002` | 🔴 | **Kids apps must comply with COPPA** | No behavioral targeting, no personal data collection from children |
+| `GOOG-FAMILY-003` | 🔴 | **Dating/gambling apps need robust age-gating** | Must prevent minors from accessing age-restricted content and features |
+| `GOOG-FAMILY-004` | 🟡 | **Play Age Signals API data restrictions** | Age data from API cannot be used for advertising, profiling, or analytics |
+
+---
+
+## Data Deletion & Account Management — GOOGLE ENFORCEMENT
+
+> Google requires BOTH in-app AND web-based deletion paths. Missing either = app removal from Play Store.
+
+| ID | Severity | Rule | What to Check |
+|----|----------|------|---------------|
+| `GOOG-DEL-001` | 🔴 | **In-app account deletion required** | If users can create accounts, must provide in-app path to delete account and data |
+| `GOOG-DEL-002` | 🔴 | **Web-based deletion link REQUIRED** | Must provide a web URL in Data Safety form where users can request deletion WITHOUT reinstalling the app |
+| `GOOG-DEL-003` | 🔴 | **Must delete ALL associated user data** | All personal data must be deleted unless legally required to retain |
+| `GOOG-DEL-004` | 🟡 | **Data Safety form must reflect deletion capability** | Accurately declare deletion options and data retention in Play Console |
+
+**Google Account Deletion Requirements:**
+```
+IN-APP PATH (Required):
+├── "Delete Account" in Settings/Profile
+├── Clear explanation of what will be deleted
+├── Process deletion on server
+└── Confirm deletion to user
+
+WEB DELETION PAGE (Required — Google-specific):
+├── Create page at yourdomain.com/delete-account
+├── User identifies account (email/phone)
+├── Verification step (email code, OTP)
+├── Process deletion same as in-app
+└── Add this URL in Play Console → Data Safety form
+```
+
+---
+
+## Developer Verification & Organization — NEW 2025-2026
+
+| ID | Severity | Rule | What to Check |
+|----|----------|------|---------------|
+| `GOOG-ORG-001` | 🔴 | **Finance/health/VPN/gov apps must register as Organization** | These app categories require Organization account type in Play Console |
+| `GOOG-ORG-002` | 🟡 | **Account transfers require official workflow** | Must use Play Console "Transfer ownership" — includes mandatory 7-day security delay |
 
 ---
 
@@ -318,7 +514,14 @@ ITSAppUsesNonExemptEncryption (set NO if no custom encryption)
 - [ ] ATT prompt if using tracking (iOS)
 - [ ] No hardcoded API secrets in client code
 - [ ] No hidden data collection
-- [ ] Account deletion option available (if login exists)
+- [ ] Account deletion available in-app (if login exists) — Apple & Google REQUIRED
+- [ ] Account deletion ACTUALLY deletes data from server (not just deactivate)
+- [ ] Sign in with Apple token revocation on deletion (if SIWA used)
+- [ ] Web-based deletion URL provided in Google Data Safety form
+- [ ] Privacy Manifest (PrivacyInfo.xcprivacy) included and complete (iOS)
+- [ ] All third-party SDKs have privacy manifests + digital signatures (iOS)
+- [ ] AI content has safety filters and moderation (if applicable)
+- [ ] SDK compliance verified — no flagged/banned SDKs
 
 ### Content & IP
 - [ ] All media owned or licensed
@@ -352,14 +555,24 @@ ITSAppUsesNonExemptEncryption (set NO if no custom encryption)
 - [ ] iPad screenshots uploaded (if universal app)
 - [ ] `SUPPORTED_PLATFORMS = iphoneos` for archive
 - [ ] Correct app category
+- [ ] `PrivacyInfo.xcprivacy` file present and complete
+- [ ] All SDKs include privacy manifests + digital signatures
+- [ ] Sign in with Apple offered (if any social login exists)
+- [ ] Account deletion in-app with SIWA token revocation
+- [ ] Age rating questionnaire updated (2025 format)
 
 ### Android Specific
-- [ ] Target SDK ≥ API 34
+- [ ] Target SDK ≥ API 35
 - [ ] 64-bit (arm64-v8a) included
 - [ ] Uploaded as .aab
 - [ ] Version code incremented
 - [ ] Data Safety form completed — matches actual data collection
 - [ ] No ANR issues
+- [ ] Photo Picker API used (not broad READ_MEDIA_*)
+- [ ] Foreground service types declared in manifest
+- [ ] Web deletion URL added to Data Safety form
+- [ ] SDK compliance checked — no flagged/banned SDKs
+- [ ] Organization account type set (if finance/health/VPN/gov app)
 
 ---
 
@@ -404,13 +617,66 @@ Apple & Google reviewers test from different devices, regions, and accounts. If 
 
 ---
 
-## 15. Account Management
+## 15. Account & Data Deletion — BOTH PLATFORMS (Most Common Rejection)
+
+> **This is the #1 most common "surprise rejection" for apps with login/signup.** Both Apple and Google strictly enforce this. Apple requires in-app deletion since 2022. Google requires BOTH in-app AND a web deletion URL. Getting this wrong = instant rejection on Apple, app removal on Google.
 
 | ID | Severity | Rule | What to Check |
 |----|----------|------|---------------|
-| `ADV-ACCT-001` | 🔴 | **Account deletion MUST be available in-app** | If users can create accounts, they MUST be able to delete them inside the app. Apple requires this since 2022 |
-| `ADV-ACCT-002` | 🟡 | **Account deletion must actually work** | Don't just show a button — data must actually be deleted |
-| `ADV-ACCT-003` | 🟡 | **Clear data retention policy** | Tell users what happens to their data after deletion |
+| `ADV-ACCT-001` | 🔴 | **Account deletion MUST exist in-app** | Both Apple & Google: if users create accounts, deletion must be available inside the app. No exceptions |
+| `ADV-ACCT-002` | 🔴 | **Deletion must ACTUALLY delete data** | Don't just deactivate/disable — server must delete personal data from ALL databases and services |
+| `ADV-ACCT-003` | 🔴 | **Apple: Revoke Sign in with Apple tokens** | If using SIWA, MUST call Apple REST API to revoke refresh tokens on account deletion |
+| `ADV-ACCT-004` | 🔴 | **Google: Web-based deletion URL required** | Must provide a web link in Data Safety form where users can request deletion WITHOUT reinstalling the app |
+| `ADV-ACCT-005` | 🔴 | **Must not require contacting support** | No "email us" or "call us" or "fill a form on website" to delete — must be self-service in-app |
+| `ADV-ACCT-006` | 🔴 | **Easy to find in UI** | Delete button must be in Settings or Profile screen — not hidden in sub-sub-menus |
+| `ADV-ACCT-007` | 🔴 | **Must delete from ALL third-party services** | Remove data from analytics, crash reporting, marketing, CRM, cloud storage — everything |
+| `ADV-ACCT-008` | 🟡 | **Confirmation before deletion** | Must have confirmation step ("Are you sure?") to prevent accidental deletion |
+| `ADV-ACCT-009` | 🟡 | **Explain what gets deleted** | Warn about loss of purchases, data, history, and subscriptions before confirming |
+| `ADV-ACCT-010` | 🟡 | **Handle active subscriptions** | Cancel or clearly notify user about active subscriptions before account deletion |
+| `ADV-ACCT-011` | 🟡 | **Data retention disclosure** | If any data retained (fraud prevention, legal compliance), clearly state what and why |
+| `ADV-ACCT-012` | 🟡 | **Send deletion confirmation** | Email/notify user confirming their account and data have been permanently deleted |
+
+**Complete Account Deletion Implementation Guide (Apple + Google):**
+```
+CLIENT SIDE (Both Platforms):
+├── Settings/Profile → "Delete Account" button (easily visible, not hidden)
+├── Confirmation screen → clearly explain what will be deleted
+├── Re-authenticate user (password, biometrics, or OTP) before deletion
+├── Show loading/progress state during deletion
+├── Clear ALL local data (cache, tokens, preferences, saved files)
+├── Redirect to login/welcome screen after deletion
+└── Show success message confirming deletion
+
+SERVER SIDE (Both Platforms):
+├── Delete user record from main database
+├── Delete all user-generated content (posts, messages, photos, videos)
+├── Delete uploaded files from cloud storage (S3, GCS, Firebase Storage)
+├── Revoke Sign in with Apple tokens (Apple REST API — APPLE REQUIRED)
+├── Revoke Google Sign-In tokens (if applicable)
+├── Remove from Firebase Analytics / Mixpanel / Amplitude
+├── Remove from Crashlytics / Sentry / Bugsnag
+├── Remove from email services (Mailchimp, SendGrid, customer.io)
+├── Remove from CRM / support tools (Intercom, Zendesk)
+├── Cancel active subscriptions OR notify user they must cancel
+├── Send deletion confirmation email
+└── Log deletion event for compliance audit trail ONLY
+
+WEB DELETION PAGE (Google Play REQUIRED):
+├── Create accessible page at yourdomain.com/delete-account
+├── User enters email or phone to identify their account
+├── Send verification code (email OTP or SMS)
+├── After verification, process deletion same as in-app
+├── Show confirmation that deletion request was received
+└── Add this URL in Play Console → Data Safety → "Data deletion" section
+
+APPLE-SPECIFIC REQUIREMENTS:
+├── Sign in with Apple → revoke tokens via REST API:
+│   POST https://appleid.apple.com/auth/revoke
+│   Parameters: client_id, client_secret, token, token_type_hint
+├── Must work even if user signed up via SIWA with hidden email
+├── Must handle relay email addresses (@privaterelay.appleid.com)
+└── Deletion must be available WITHOUT requiring the user to contact support
+```
 
 ---
 
@@ -867,6 +1133,14 @@ Layer Assessment:
 | Google Play Billing | https://developer.android.com/google/play/billing |
 | Apple StoreKit | https://developer.apple.com/storekit/ |
 | Apple Account Deletion Requirement | https://developer.apple.com/support/offering-account-deletion-in-your-app/ |
+| Apple Privacy Manifests | https://developer.apple.com/documentation/bundleresources/privacy_manifest_files |
+| Apple Required Reason APIs | https://developer.apple.com/documentation/bundleresources/privacy_manifest_files/describing_use_of_required_reason_api |
+| Apple Sign in with Apple | https://developer.apple.com/sign-in-with-apple/ |
+| Google Play Data Safety | https://support.google.com/googleplay/android-developer/answer/10787469 |
+| Google Play Data Deletion | https://support.google.com/googleplay/android-developer/answer/13327111 |
+| Google Play Families Policy | https://support.google.com/googleplay/android-developer/answer/9893335 |
+| Google Foreground Services | https://developer.android.com/develop/background-work/services/foreground-services |
+| Android Photo Picker | https://developer.android.com/training/data-storage/shared/photopicker |
 
 ---
 

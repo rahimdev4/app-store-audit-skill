@@ -78,8 +78,16 @@ Every mobile developer has been there:
 | ⚠️ Content Policy | ✅ | ✅ | Adult content, hate speech, gambling, dangerous activities |
 | 🎭 Misleading Functionality | ✅ | ✅ | Fake features, hidden functionality, fake buttons |
 | 📱 Platform-Specific | ✅ | ✅ | Target SDK, 64-bit, .aab format, Info.plist flags |
+| 🤖 AI & Machine Learning | ✅ | ✅ | Safety filters, content moderation, dynamic code execution |
+| 🛡️ Privacy Manifests | ✅ | — | PrivacyInfo.xcprivacy, Required Reason APIs, SDK signatures |
+| 🔑 Authentication | ✅ | ✔️ | Sign in with Apple enforcement, social login compliance |
+| 🗑️ Account & Data Deletion | ✅ | ✅ | In-app deletion, SIWA token revocation, web deletion URL |
+| 👶 Families & Kids | — | ✅ | COPPA compliance, ad ID restrictions, age-gating |
+| 📷 Media Permissions | — | ✅ | Photo Picker API, broad media access declarations |
+| ⚙️ Foreground Services | — | ✅ | Service type declarations, geofencing restrictions |
+| 🇪🇺 EU DMA Compliance | ✅ | — | Alternative payments, browser engines, offers promotion |
 
-> **70+ audit rules** across **15 categories** — based on official guidelines and real-world rejections.
+> **140+ audit rules** across **32 categories** — based on official guidelines and real-world rejections.
 
 ---
 
@@ -282,12 +290,13 @@ GOOG-BILL-003   → Google, Billing, Rule #003
 
 ## 📊 Stats
 
-- **95+** audit rules
+- **140+** audit rules
 - **2** store platforms covered (Apple + Google)
 - **7+** frameworks supported (Flutter, React Native, Swift, Kotlin, KMP, Java, Compose)
-- **21** categories (including 10 advanced edge-cases)
+- **32** categories (including AI content, privacy manifests, account deletion, families policy)
 - **4 Layers of Rejection** framework
 - **Auto-detection** of project framework by AI
+- **Complete implementation guides** for account deletion (Apple + Google)
 - **Built from real rejections** — not just docs
 
 ---
