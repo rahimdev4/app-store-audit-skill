@@ -9,7 +9,7 @@
   </p>
   <p align="center">
     <a href="#quick-start"><img src="https://img.shields.io/badge/Quick_Start-blue?style=for-the-badge" alt="Quick Start" /></a>
-    <a href="https://github.com/RahimU4/app-store-audit-skill/stargazers"><img src="https://img.shields.io/github/stars/RahimU4/app-store-audit-skill?style=for-the-badge&color=yellow" alt="Stars" /></a>
+    <a href="https://github.com/Rahimdev4/app-store-audit-skill/stargazers"><img src="https://img.shields.io/github/stars/Rahimdev4/app-store-audit-skill?style=for-the-badge&color=yellow" alt="Stars" /></a>
     <a href="#license"><img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License" /></a>
   </p>
   <p align="center">
@@ -262,7 +262,7 @@ These are actual rejections that led to rules in this skill:
 | B3G TV | Apple | Streaming app content rights questioned — required ownership statement | `AAPL-5.2.3-002` |
 | B3G TV | Apple | App Privacy section not filled — required Admin role in App Store Connect | `AAPL-META-007` |
 
-> **Have a rejection story?** [Open an issue](https://github.com/RahimU4/app-store-audit-skill/issues) or submit a PR to add your case!
+> **Have a rejection story?** [Open an issue](https://github.com/Rahimdev4/app-store-audit-skill/issues) or submit a PR to add your case!
 
 ---
 
@@ -323,5 +323,5 @@ MIT License — use freely in personal and commercial projects.
 </p>
 
 <p align="center">
-  Made with ❤️ by <a href="https://github.com/RahimU4">@RahimU4</a>
+  Made with ❤️ by <a href="https://rahimdev.net/">RahimDev</a>
 </p>
